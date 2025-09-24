@@ -1,0 +1,161 @@
+/* Full page wrapper */
+.wrapper {
+  display: flex;
+  justify-content: flex-end; /* align login container to right on desktop */
+  align-items: center;       /* vertical center */
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  gap: 40px; /* space between logo and login container */
+}
+
+/* Logo styling */
+.logo {
+  justify-content: flex-start;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  width: 700px;
+  height: auto;
+  text-align: center;
+  padding: 50px;
+  box-sizing: border-box;
+  border-radius: 70px;
+}
+
+/* Login container */
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Login heading */
+.login-container h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+/* Form layout */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Input fields */
+.login-input {
+  padding: 12px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  background: #f1f1f1;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.login-input:focus {
+  background: #fff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+/* Submit button */
+.login-button {
+  padding: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(135deg, #434343, #000000);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  background: linear-gradient(135deg, #000000, #434343);
+}
+
+/* Register link */
+.login-container p {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ddd;
+}
+
+.login-container p a {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-container p a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .wrapper {
+    justify-content: flex-end; /* keep right-aligned for smaller desktops */
+    gap: 40px;
+  }
+
+  .logo {
+    width: 90%; /* shrink logo */
+    padding: 30px 100px ;
+  }
+
+  .login-container {
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    flex-direction: column;  /* stack logo above login container */
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .logo {
+    width: 80%; /* logo responsive width */
+    padding: 20px;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container h2 {
+    font-size: 24px;
+  }
+
+  .login-input {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .login-button {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .logo {
+    width: 90%; /* smaller devices */
+    padding: 15px;
+  }
+}
