@@ -2,32 +2,29 @@ import "../styles/Dashboard.css";
 import { useState, useEffect } from "react";
 
 function Recruit({ setIsAuthenticated }) {
-  // Candidates state
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
   const [error, setError] = useState(null);
 
-  // Selected candidate
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-
-  // Messages
   const [message, setMessage] = useState("");
 
-  // Search
   const [searchType, setSearchType] = useState("email");
   const [searchValue, setSearchValue] = useState("");
   const [searchResult, setSearchResult] = useState(null);
 
+  // State to track role input
+  const [roleInputFor, setRoleInputFor] = useState(null); // iid of candidate waiting for role
+  const [roleValue, setRoleValue] = useState("");
+
   const API_BASE = "http://localhost:8080";
 
-  // 🔹 Fetch utility
   async function fetchJSON(url, options = {}) {
     const res = await fetch(url, options);
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   }
 
-  // 🔹 Load candidates
   useEffect(() => {
     loadCandidates();
   }, []);
@@ -45,39 +42,36 @@ function Recruit({ setIsAuthenticated }) {
     }
   }
 
-  // 🔹 Show candidate details
-  async function showCandidate(id) {
+  async function showCandidate(iid) {
     setMessage("");
     setSelectedCandidate(null);
     try {
-      const c = await fetchJSON(`${API_BASE}/candidates/${id}`);
+      const c = await fetchJSON(`${API_BASE}/candidates/${iid}`);
       setSelectedCandidate(c);
     } catch (err) {
       setMessage("Error: " + err.message);
     }
   }
 
-  // 🔹 Update candidate status
-  async function updateCandidateStatus(id, status) {
+  async function updateCandidateStatus(iid, status, role = "") {
     try {
-      await fetchJSON(`${API_BASE}/update-status?${id}=active&role=${Role}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-      setMessage(`Status updated to "${status}" for candidate ${id}.`);
+      const url = `${API_BASE}/update-status?id=${iid}&status=${status}&role=${role}`;
+      const updatedUser = await fetchJSON(url, { method: "PUT" });
+
+      setMessage(`Status updated to "${status}" for candidate ${iid}.`);
       loadCandidates();
 
-      if (selectedCandidate?.id === id) {
-        const refreshed = await fetchJSON(`${API_BASE}/update-status?${id}=active&role=${Role}`);
-        setSelectedCandidate(refreshed);
+      if (selectedCandidate?.iid === iid) {
+        setSelectedCandidate(updatedUser);
       }
+
+      setRoleInputFor(null);
+      setRoleValue("");
     } catch (err) {
       setMessage("Error: " + err.message);
     }
   }
 
-  // 🔹 Send email
   async function sendEmail() {
     if (!selectedCandidate?.email) {
       setMessage("No email available.");
@@ -88,7 +82,6 @@ function Recruit({ setIsAuthenticated }) {
     setMessage(`Email sent to ${selectedCandidate.email} (stub).`);
   }
 
-  // 🔹 Search user
   async function searchUser() {
     setSearchResult(null);
     setMessage("");
@@ -112,8 +105,8 @@ function Recruit({ setIsAuthenticated }) {
 
         <ul className="candidate-list">
           {candidates.map((c, index) => (
-            <li key={c.id ?? index} className="candidate-item">
-              <div onClick={() => showCandidate(c.id)} style={{ cursor: "pointer" }}>
+            <li key={c.iid ?? index} className="candidate-item">
+              <div onClick={() => showCandidate(c.iid)} style={{ cursor: "pointer" }}>
                 <h3>{c.name}</h3>
                 <p><strong>Email:</strong> {c.email || "-"}</p>
                 <p><strong>Phone:</strong> {c.phone || "-"}</p>
@@ -122,18 +115,38 @@ function Recruit({ setIsAuthenticated }) {
               </div>
 
               <div className="status-buttons">
-                <button
-                  className={`status-btn ${c.status === "selected" ? "active" : ""}`}
-                  onClick={() => updateCandidateStatus(c.id, "selected")}
-                >
-                  ✅ Selected
-                </button>
-                <button
-                  className={`status-btn ${c.status === "rejected" ? "active" : ""}`}
-                  onClick={() => updateCandidateStatus(c.id, "rejected")}
-                >
-                  ❌ Rejected
-                </button>
+                {roleInputFor === c.iid ? (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Enter role"
+                      value={roleValue}
+                      onChange={(e) => setRoleValue(e.target.value)}
+                    />
+                    <button
+                      onClick={() => updateCandidateStatus(c.iid, "selected", roleValue)}
+                      disabled={!roleValue.trim()}
+                    >
+                      Confirm
+                    </button>
+                    <button onClick={() => setRoleInputFor(null)}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className={`status-btn ${c.status === "selected" ? "active" : ""}`}
+                      onClick={() => setRoleInputFor(c.iid)}
+                    >
+                      ✅ Selected
+                    </button>
+                    <button
+                      className={`status-btn ${c.status === "rejected" ? "active" : ""}`}
+                      onClick={() => updateCandidateStatus(c.iid, "rejected")}
+                    >
+                      ❌ Rejected
+                    </button>
+                  </>
+                )}
               </div>
             </li>
           ))}
@@ -152,20 +165,40 @@ function Recruit({ setIsAuthenticated }) {
             <hr />
 
             <div className="status-buttons">
-              <button
-                type="button"
-                className={`status-btn ${selectedCandidate.status === "selected" ? "active" : ""}`}
-                onClick={() => updateCandidateStatus(selectedCandidate.id, "selected")}
-              >
-                ✅ Selected
-              </button>
-              <button
-                type="button"
-                className={`status-btn ${selectedCandidate.status === "rejected" ? "active" : ""}`}
-                onClick={() => updateCandidateStatus(selectedCandidate.id, "rejected")}
-              >
-                ❌ Rejected
-              </button>
+              {roleInputFor === selectedCandidate.iid ? (
+                <>
+                  <input
+                    type="text"
+                    placeholder="Enter role"
+                    value={roleValue}
+                    onChange={(e) => setRoleValue(e.target.value)}
+                  />
+                  <button
+                    onClick={() => updateCandidateStatus(selectedCandidate.iid, "selected", roleValue)}
+                    disabled={!roleValue.trim()}
+                  >
+                    Confirm
+                  </button>
+                  <button onClick={() => setRoleInputFor(null)}>Cancel</button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className={`status-btn ${selectedCandidate.status === "selected" ? "active" : ""}`}
+                    onClick={() => setRoleInputFor(selectedCandidate.iid)}
+                  >
+                    ✅ Selected
+                  </button>
+                  <button
+                    type="button"
+                    className={`status-btn ${selectedCandidate.status === "rejected" ? "active" : ""}`}
+                    onClick={() => updateCandidateStatus(selectedCandidate.iid, "rejected")}
+                  >
+                    ❌ Rejected
+                  </button>
+                </>
+              )}
             </div>
             <br />
             <button type="button" className="secondary" onClick={sendEmail}>
@@ -204,7 +237,6 @@ function Recruit({ setIsAuthenticated }) {
         )}
       </section>
 
-      {/* Global Message */}
       {message && <div id="message">{message}</div>}
     </div>
   );
