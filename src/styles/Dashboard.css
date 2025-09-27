@@ -115,3 +115,155 @@
 .user-info .username {
   font-weight: bold;
 }
+
+.candidates-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.candidates-table th, .candidates-table td {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.status-btn {
+  margin-right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.status-btn.active {
+  background: #4caf50;
+  color: white;
+  font-weight: bold;
+}
+
+.status-btn:nth-child(2).active {
+  background: #f44336;
+}
+
+
+/* Dashboard base */
+.dashboard {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #1e1e2f; /* dark background */
+  color: white;
+}
+
+/* Candidate List */
+.candidate-list {
+  list-style: none; /* remove bullets */
+  padding: 0;
+  margin: 0;
+}
+
+.candidate-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  background-color: #2a2a3f;
+  border-radius: 8px;
+  transition: background 0.2s;
+  cursor: pointer;
+  width: 100%;
+}
+
+.candidate-item:hover {
+  background-color: #3a3a5a;
+}
+
+/* Candidate details inside row */
+.candidate-item > div:first-child {
+  flex: 1; /* take up remaining space */
+}
+
+.candidate-item h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  color: white;
+}
+
+.candidate-item p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: white;
+}
+
+/* Status buttons */
+.status-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.status-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #555; /* default grey */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.status-btn.active,
+.status-btn:hover {
+  background-color: #4caf50; /* green when selected */
+}
+
+.status-btn.active.reject {
+  background-color: #f44336; /* red for rejected */
+}
+
+/* Candidate Detail Panel */
+.candidate-detail {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #2a2a3f;
+  border-radius: 8px;
+}
+
+.candidate-detail h2 {
+  margin-top: 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 60px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1e1e2f;
+  color: white;
+  padding: 6px;
+}
+
+/* Search section */
+.result {
+  margin-top: 10px;
+  background-color: #2a2a3f;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+/* Buttons */
+button.secondary {
+  background-color: #007bff;
+  color: white;
+  margin-left: 8px;
+}
+
+#message {
+  margin-top: 12px;
+  padding: 8px;
+  background-color: #444;
+  border-radius: 4px;
+  color: white;
+}

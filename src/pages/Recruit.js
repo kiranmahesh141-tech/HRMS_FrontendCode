@@ -2,7 +2,6 @@ import "../styles/Dashboard.css";
 import { useState, useEffect } from "react";
 
 function Recruit({ setIsAuthenticated }) {
-
   // Candidates state
   const [candidates, setCandidates] = useState([]);
   const [loadingCandidates, setLoadingCandidates] = useState(false);
@@ -28,7 +27,7 @@ function Recruit({ setIsAuthenticated }) {
     return res.json();
   }
 
-  // 🔹 Load candidates on page start
+  // 🔹 Load candidates
   useEffect(() => {
     loadCandidates();
   }, []);
@@ -37,7 +36,7 @@ function Recruit({ setIsAuthenticated }) {
     setLoadingCandidates(true);
     setError(null);
     try {
-      const data = await fetchJSON(`${API_BASE}/hr-dashboard/candidates`);
+      const data = await fetchJSON(`${API_BASE}/getAllUsers`);
       setCandidates(data);
     } catch (err) {
       setError(err.message);
@@ -58,34 +57,24 @@ function Recruit({ setIsAuthenticated }) {
     }
   }
 
-  // 🔹 Update candidate status (used in list + detail)
-  async function updateCandidateStatus(id, status, hrNotes = "") {
+  // 🔹 Update candidate status
+  async function updateCandidateStatus(id, status) {
     try {
-      await fetchJSON(`${API_BASE}/candidates/${id}/status`, {
+      await fetchJSON(`${API_BASE}/update-status?${id}=active&role=${Role}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status, hrNotes }),
+        body: JSON.stringify({ status }),
       });
       setMessage(`Status updated to "${status}" for candidate ${id}.`);
       loadCandidates();
+
+      if (selectedCandidate?.id === id) {
+        const refreshed = await fetchJSON(`${API_BASE}/update-status?${id}=active&role=${Role}`);
+        setSelectedCandidate(refreshed);
+      }
     } catch (err) {
       setMessage("Error: " + err.message);
     }
-  }
-
-  // 🔹 Save decision (from detail form)
-  async function saveDecision(e) {
-    e.preventDefault();
-    if (!selectedCandidate) return;
-
-    const status = e.target.status.value;
-    const hrNotes = e.target.hrNotes.value;
-
-    await updateCandidateStatus(selectedCandidate.id, status, hrNotes);
-
-    // refresh detail panel
-    const refreshed = await fetchJSON(`${API_BASE}/candidates/${selectedCandidate.id}`);
-    setSelectedCandidate(refreshed);
   }
 
   // 🔹 Send email
@@ -96,7 +85,6 @@ function Recruit({ setIsAuthenticated }) {
     }
     if (!window.confirm(`Send result email to ${selectedCandidate.email}?`)) return;
 
-    // Example: implement email API here
     setMessage(`Email sent to ${selectedCandidate.email} (stub).`);
   }
 
@@ -116,119 +104,73 @@ function Recruit({ setIsAuthenticated }) {
 
   return (
     <div className="dashboard">
-     
-
-
       {/* Candidate List */}
       <section>
         <h2>Candidates</h2>
         {loadingCandidates && <p className="muted">Loading...</p>}
         {error && <p className="error">Error: {error}</p>}
-        <ul>
-          {candidates.map((c) => (
-            <li
-              key={c.id}
-              className={selectedCandidate?.id === c.id ? "selected" : ""}
-            >
-              {/* Candidate name (click to view details) */}
-              <div
-                onClick={() => showCandidate(c.id)}
-                style={{ cursor: "pointer" }}
-              >
-                {c.name} – {c.position}
+
+        <ul className="candidate-list">
+          {candidates.map((c, index) => (
+            <li key={c.id ?? index} className="candidate-item">
+              <div onClick={() => showCandidate(c.id)} style={{ cursor: "pointer" }}>
+                <h3>{c.name}</h3>
+                <p><strong>Email:</strong> {c.email || "-"}</p>
+                <p><strong>Phone:</strong> {c.phone || "-"}</p>
+                <p><strong>Interview Id:</strong> {c.iid || "-"}</p>
+                <p><strong>Status:</strong> {c.status || "-"}</p>
               </div>
 
-              {/* Status radio buttons */}
-              <div className="status-options">
-                <label>
-                  <input
-                    type="radio"
-                    name={`status-${c.id}`}
-                    value="selected"
-                    checked={c.status === "selected"}
-                    onChange={() =>
-                      updateCandidateStatus(c.id, "selected", c.hrNotes)
-                    }
-                  />
-                  Selected
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name={`status-${c.id}`}
-                    value="rejected"
-                    checked={c.status === "rejected"}
-                    onChange={() =>
-                      updateCandidateStatus(c.id, "rejected", c.hrNotes)
-                    }
-                  />
-                  Rejected
-                </label>
+              <div className="status-buttons">
+                <button
+                  className={`status-btn ${c.status === "selected" ? "active" : ""}`}
+                  onClick={() => updateCandidateStatus(c.id, "selected")}
+                >
+                  ✅ Selected
+                </button>
+                <button
+                  className={`status-btn ${c.status === "rejected" ? "active" : ""}`}
+                  onClick={() => updateCandidateStatus(c.id, "rejected")}
+                >
+                  ❌ Rejected
+                </button>
               </div>
             </li>
           ))}
         </ul>
       </section>
 
-      {/* Candidate Detail */}
+      {/* Candidate Detail Panel */}
       <section>
         {selectedCandidate ? (
           <div className="candidate-detail">
             <h2>{selectedCandidate.name}</h2>
-            <p>
-              <strong>Email:</strong>{" "}
-              {selectedCandidate.email || "-"}
-            </p>
-            <p>
-              <strong>Phone:</strong>{" "}
-              {selectedCandidate.phone || "-"}
-            </p>
-            <p>
-              <strong>Interview Id:</strong>{" "}
-              {selectedCandidate.Iid || "-"}
-            </p>
+            <p><strong>Email:</strong> {selectedCandidate.email || "-"}</p>
+            <p><strong>Phone:</strong> {selectedCandidate.phone || "-"}</p>
+            <p><strong>Interview Id:</strong> {selectedCandidate.iid || "-"}</p>
+            <p><strong>Status:</strong> {selectedCandidate.status || "-"}</p>
             <hr />
 
-            <form onSubmit={saveDecision}>
-              <div>
-                <strong>Decision:</strong>
-                <label>
-                  <input
-                    type="radio"
-                    name="status"
-                    value="selected"
-                    defaultChecked={selectedCandidate.status === "selected"}
-                  />
-                  Selected
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="status"
-                    value="rejected"
-                    defaultChecked={selectedCandidate.status === "rejected"}
-                  />
-                  Rejected
-                </label>
-              </div>
-              <br />
-              <label>
-                HR Notes:
-                <textarea
-                  name="hrNotes"
-                  defaultValue={selectedCandidate.hrNotes || ""}
-                />
-              </label>
-              <br />
-              <button type="submit">Save Decision</button>
+            <div className="status-buttons">
               <button
                 type="button"
-                className="secondary"
-                onClick={sendEmail}
+                className={`status-btn ${selectedCandidate.status === "selected" ? "active" : ""}`}
+                onClick={() => updateCandidateStatus(selectedCandidate.id, "selected")}
               >
-                Send Result Email
+                ✅ Selected
               </button>
-            </form>
+              <button
+                type="button"
+                className={`status-btn ${selectedCandidate.status === "rejected" ? "active" : ""}`}
+                onClick={() => updateCandidateStatus(selectedCandidate.id, "rejected")}
+              >
+                ❌ Rejected
+              </button>
+            </div>
+            <br />
+            <button type="button" className="secondary" onClick={sendEmail}>
+              Send Result Email
+            </button>
           </div>
         ) : (
           <p className="muted">Select a candidate to see details</p>
@@ -238,10 +180,7 @@ function Recruit({ setIsAuthenticated }) {
       {/* Search Section */}
       <section>
         <h2>Search User</h2>
-        <select
-          value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
-        >
+        <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
           <option value="email">Email</option>
           <option value="phone">Phone</option>
           <option value="name">Name</option>
@@ -256,8 +195,8 @@ function Recruit({ setIsAuthenticated }) {
 
         {searchResult && (
           <div className="result">
-            {Object.entries(searchResult).map(([k, v]) => (
-              <div key={k}>
+            {Object.entries(searchResult).map(([k, v], index) => (
+              <div key={`${k}-${index}`}>
                 <b>{k}:</b> {v}
               </div>
             ))}
