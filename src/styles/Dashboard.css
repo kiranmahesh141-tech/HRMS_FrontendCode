@@ -38,3 +38,80 @@
     font-size: 12px;
   }
 }
+
+/* sidebar */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 25%;
+  color: white;
+  padding-top: 40px;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  max-width: 400px;
+  padding: 40px;
+ 
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  box-sizing: border-box;
+}
+/* Dashboard for recruitment */
+.dashboard{
+  width: 100%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  box-sizing: border-box;
+}
+/* Menu list */
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background 0.2s,ease-in;
+}
+.menu li a{
+   list-style: none;
+   color: white;  
+}
+.menu li:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  box-sizing: border-box;
+  border-radius: 30px;
+}
+
+
+.user-info {
+  position: fixed;
+  bottom: 0;
+  left: 0;          
+  width: 25%;/* full width */
+  background-color: #000; /* black background */
+  color: #fff;            /* white text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  font-size: 16px;
+  z-index: 1000;          /* stay above other elements */
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.user-info .avatar {
+  margin-right: 10px;
+  font-size: 20px; /* make emoji a bit bigger */
+ 
+}
+
+.user-info .username {
+  font-weight: bold;
+}

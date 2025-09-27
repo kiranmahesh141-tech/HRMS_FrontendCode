@@ -7,6 +7,7 @@ import RegSuccess from './components/regsucc';
 import HRDashboard from './pages/HrDashboard';
 import EmpDashboard from './pages/EmpDashboard';
 import { useEffect } from 'react';
+import Recruit from './pages/Recruit';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -36,7 +37,11 @@ if (checkingAuth) {
       <Route
         path="/hr-dashboard"
         element={isAuthenticated ? <HRDashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" replace />}
-      />
+      >
+          {/* Nested routes */}
+          <Route path="Recruit" element={<Recruit />} />
+          <Route path="" />
+      </Route>
       <Route
       path="/emp-dashboard"
       element={isAuthenticated ? <EmpDashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/login" replace />}

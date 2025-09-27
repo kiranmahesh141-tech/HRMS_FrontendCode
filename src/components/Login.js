@@ -7,14 +7,21 @@ function Login({ setIsAuthenticated }) {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(null); // toast state
   const navigate = useNavigate();
+
+  // helper to show toast
+  const showToast = (message, type) => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000); // auto-hide after 3s
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8080/api/login", {
+      const res = await axios.post("http://localhost:8080/login", {
         identifier,
         password,
       });
@@ -22,7 +29,7 @@ function Login({ setIsAuthenticated }) {
       const { status, role, id } = res.data;
 
       if (status?.toLowerCase() !== "success") {
-        alert("Invalid credentials!");
+        showToast("Invalid credentials!", "error");
         return;
       }
 
@@ -37,9 +44,21 @@ function Login({ setIsAuthenticated }) {
       if (role === "HR") navigate("/hr-dashboard");
       else if (role === "EMP") navigate("/emp-dashboard");
       else navigate("/");
+
+      showToast("Login successful!", "success");
     } catch (error) {
       console.error("Login error:", error.response?.data || error.message);
-      alert(error.response?.data?.status || "Invalid credentials!");
+
+      // Extract backend error message
+      const backendError = error.response?.data;
+      let errorMessage = "Something went wrong!";
+      if (backendError?.message) {
+        errorMessage = backendError.message;
+      } else if (typeof backendError === "string") {
+        errorMessage = backendError;
+      }
+
+      showToast(errorMessage, "error");
     } finally {
       setLoading(false);
     }
@@ -51,7 +70,11 @@ function Login({ setIsAuthenticated }) {
       <div className="login-container">
         <div style={styles.container} className="login-box">
           <h2>Login</h2>
-          <form onSubmit={handleLogin} style={styles.form} className="login-form">
+          <form
+            onSubmit={handleLogin}
+            style={styles.form}
+            className="login-form"
+          >
             <input style={{ display: "none" }} />
             <input type="password" style={{ display: "none" }} />
 
@@ -75,7 +98,12 @@ function Login({ setIsAuthenticated }) {
               autoComplete="current-password"
             />
 
-            <button type="submit" style={styles.button} className="login-button">
+            <button
+              type="submit"
+              style={styles.button}
+              className="login-button"
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
@@ -84,15 +112,25 @@ function Login({ setIsAuthenticated }) {
           </p>
         </div>
       </div>
+
+      {/* Toast container */}
+      <div className="toast-container">
+        {toast && <div className={`toast ${toast.type}`}>{toast.message}</div>}
+      </div>
     </div>
   );
 }
 
 const styles = {
-  container: { maxWidth: "400px", margin: "auto", padding: "20px", textAlign: "center" },
+  container: {
+    maxWidth: "400px",
+    margin: "auto",
+    padding: "20px",
+    textAlign: "center",
+  },
   form: { display: "flex", flexDirection: "column", gap: "10px" },
   input: { padding: "10px", fontSize: "16px" },
-  button: { padding: "10px", fontSize: "16px", cursor: "pointer" }
+  button: { padding: "10px", fontSize: "16px", cursor: "pointer" },
 };
 
 export default Login;
