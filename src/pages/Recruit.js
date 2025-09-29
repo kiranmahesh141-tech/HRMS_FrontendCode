@@ -17,6 +17,8 @@ function Recruit({ setIsAuthenticated }) {
   const [roleInputFor, setRoleInputFor] = useState(null);
   const [roleValue, setRoleValue] = useState("");
 
+  const [updatingCandidateId, setUpdatingCandidateId] = useState(null);
+
   const API_BASE = "http://localhost:8080";
 
   // Universal fetch function
@@ -64,18 +66,17 @@ function Recruit({ setIsAuthenticated }) {
   }
 
   async function updateCandidateStatus(iid, status, role = "") {
+    setUpdatingCandidateId(iid); // Start loading spinner
     try {
       const url = `${API_BASE}/update-status?id=${iid}&status=${status}&role=${role}`;
       const updatedUser = await fetchJSON(url, { method: "PUT" });
 
       setMessage(`✅ Status updated to "${status}" for candidate ${iid}.`);
 
-      // Update candidate list
       setCandidates(prev =>
         prev.map(c => (c.iid === iid ? updatedUser : c))
       );
 
-      // Update selected candidate if active
       if (selectedCandidate?.iid === iid) {
         setSelectedCandidate(updatedUser);
       }
@@ -84,6 +85,8 @@ function Recruit({ setIsAuthenticated }) {
       setRoleValue("");
     } catch (err) {
       setMessage(err.message);
+    } finally {
+      setUpdatingCandidateId(null); // Stop spinner
     }
   }
 
@@ -143,10 +146,8 @@ function Recruit({ setIsAuthenticated }) {
     }
   }, []);
 
-  // Debounce the search to avoid too many requests
   const debouncedSearch = useCallback(debounce(searchUser, 200), [searchUser]);
 
-  // Trigger search on every key press
   useEffect(() => {
     debouncedSearch(searchValue, searchType);
     return debouncedSearch.cancel;
@@ -157,6 +158,10 @@ function Recruit({ setIsAuthenticated }) {
   // =========================
   const renderActionButtons = (candidate) => {
     const status = candidate.status || "ONHOLD";
+
+    if (updatingCandidateId === candidate.iid) {
+      return <div className="spinner"></div>; // Spinner while updating
+    }
 
     if (status === "ONHOLD") {
       if (roleInputFor === candidate.iid) {
