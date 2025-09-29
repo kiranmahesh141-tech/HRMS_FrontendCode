@@ -13,16 +13,24 @@ function Recruit({ setIsAuthenticated }) {
   const [searchValue, setSearchValue] = useState("");
   const [searchResult, setSearchResult] = useState(null);
 
-  // State to track role input
-  const [roleInputFor, setRoleInputFor] = useState(null); // iid of candidate waiting for role
+  const [roleInputFor, setRoleInputFor] = useState(null);
   const [roleValue, setRoleValue] = useState("");
 
   const API_BASE = "http://localhost:8080";
 
+  // Universal fetch with backend error support
   async function fetchJSON(url, options = {}) {
     const res = await fetch(url, options);
-    if (!res.ok) throw new Error(await res.text());
-    return res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new Error("Invalid server response");
+    }
+    if (!res.ok) {
+      throw new Error(data.error || data.message || "Something went wrong");
+    }
+    return data;
   }
 
   useEffect(() => {
@@ -49,7 +57,7 @@ function Recruit({ setIsAuthenticated }) {
       const c = await fetchJSON(`${API_BASE}/candidates/${iid}`);
       setSelectedCandidate(c);
     } catch (err) {
-      setMessage("Error: " + err.message);
+      setMessage(err.message);
     }
   }
 
@@ -58,7 +66,7 @@ function Recruit({ setIsAuthenticated }) {
       const url = `${API_BASE}/update-status?id=${iid}&status=${status}&role=${role}`;
       const updatedUser = await fetchJSON(url, { method: "PUT" });
 
-      setMessage(`Status updated to "${status}" for candidate ${iid}.`);
+      setMessage(`✅ Status updated to "${status}" for candidate ${iid}.`);
       loadCandidates();
 
       if (selectedCandidate?.iid === iid) {
@@ -68,7 +76,7 @@ function Recruit({ setIsAuthenticated }) {
       setRoleInputFor(null);
       setRoleValue("");
     } catch (err) {
-      setMessage("Error: " + err.message);
+      setMessage(err.message);
     }
   }
 
@@ -79,7 +87,16 @@ function Recruit({ setIsAuthenticated }) {
     }
     if (!window.confirm(`Send result email to ${selectedCandidate.email}?`)) return;
 
-    setMessage(`Email sent to ${selectedCandidate.email} (stub).`);
+    try {
+      const res = await fetchJSON(`${API_BASE}/send-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: selectedCandidate.email }),
+      });
+      setMessage(res.message || `Email sent to ${selectedCandidate.email}`);
+    } catch (err) {
+      setMessage(err.message);
+    }
   }
 
   async function searchUser() {
@@ -91,9 +108,61 @@ function Recruit({ setIsAuthenticated }) {
       );
       setSearchResult(data);
     } catch (err) {
-      setMessage("Error: " + err.message);
+      setMessage(err.message);
     }
   }
+
+  // Render action buttons
+  const renderActionButtons = (candidate) => {
+    const status = candidate.status || "ONHOLD";
+
+    if (status === "ONHOLD") {
+      // Show role input if selected
+      if (roleInputFor === candidate.iid) {
+        return (
+          <div className="role-input">
+            <input
+              type="text"
+              placeholder="Enter role"
+              value={roleValue}
+              onChange={(e) => setRoleValue(e.target.value)}
+            />
+            <button
+              onClick={() =>
+                updateCandidateStatus(candidate.iid, "selected", roleValue)
+              }
+              disabled={!roleValue.trim()}
+            >
+              Confirm
+            </button>
+            <button onClick={() => setRoleInputFor(null)}>Cancel</button>
+          </div>
+        );
+      }
+
+      // Default buttons (without On Hold)
+      return (
+        <>
+          <button
+            className="status-btn"
+            onClick={() => setRoleInputFor(candidate.iid)}
+          >
+            Select
+          </button>
+          <button
+            className="status-btn"
+            onClick={() => updateCandidateStatus(candidate.iid, "rejected")}
+          >
+            Reject
+          </button>
+        </>
+      );
+    } else if (status === "selected") {
+      return <button className="status-btn active" disabled>✅ Selected</button>;
+    } else if (status === "rejected") {
+      return <button className="status-btn active" disabled>❌ Rejected</button>;
+    }
+  };
 
   return (
     <div className="dashboard">
@@ -106,48 +175,18 @@ function Recruit({ setIsAuthenticated }) {
         <ul className="candidate-list">
           {candidates.map((c, index) => (
             <li key={c.iid ?? index} className="candidate-item">
-              <div onClick={() => showCandidate(c.iid)} style={{ cursor: "pointer" }}>
+              <div
+                onClick={() => showCandidate(c.iid)}
+                style={{ cursor: "pointer" }}
+              >
                 <h3>{c.name}</h3>
                 <p><strong>Email:</strong> {c.email || "-"}</p>
                 <p><strong>Phone:</strong> {c.phone || "-"}</p>
                 <p><strong>Interview Id:</strong> {c.iid || "-"}</p>
-                <p><strong>Status:</strong> {c.status || "-"}</p>
+                <p><strong>Status:</strong> {c.status || "pending"}</p>
               </div>
 
-              <div className="status-buttons">
-                {roleInputFor === c.iid ? (
-                  <>
-                    <input
-                      type="text"
-                      placeholder="Enter role"
-                      value={roleValue}
-                      onChange={(e) => setRoleValue(e.target.value)}
-                    />
-                    <button
-                      onClick={() => updateCandidateStatus(c.iid, "selected", roleValue)}
-                      disabled={!roleValue.trim()}
-                    >
-                      Confirm
-                    </button>
-                    <button onClick={() => setRoleInputFor(null)}>Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      className={`status-btn ${c.status === "selected" ? "active" : ""}`}
-                      onClick={() => setRoleInputFor(c.iid)}
-                    >
-                      ✅ Selected
-                    </button>
-                    <button
-                      className={`status-btn ${c.status === "rejected" ? "active" : ""}`}
-                      onClick={() => updateCandidateStatus(c.iid, "rejected")}
-                    >
-                      ❌ Rejected
-                    </button>
-                  </>
-                )}
-              </div>
+              <div className="status-buttons">{renderActionButtons(c)}</div>
             </li>
           ))}
         </ul>
@@ -161,47 +200,15 @@ function Recruit({ setIsAuthenticated }) {
             <p><strong>Email:</strong> {selectedCandidate.email || "-"}</p>
             <p><strong>Phone:</strong> {selectedCandidate.phone || "-"}</p>
             <p><strong>Interview Id:</strong> {selectedCandidate.iid || "-"}</p>
-            <p><strong>Status:</strong> {selectedCandidate.status || "-"}</p>
+            <p><strong>Status:</strong> {selectedCandidate.status || "pending"}</p>
             <hr />
 
             <div className="status-buttons">
-              {roleInputFor === selectedCandidate.iid ? (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Enter role"
-                    value={roleValue}
-                    onChange={(e) => setRoleValue(e.target.value)}
-                  />
-                  <button
-                    onClick={() => updateCandidateStatus(selectedCandidate.iid, "selected", roleValue)}
-                    disabled={!roleValue.trim()}
-                  >
-                    Confirm
-                  </button>
-                  <button onClick={() => setRoleInputFor(null)}>Cancel</button>
-                </>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    className={`status-btn ${selectedCandidate.status === "selected" ? "active" : ""}`}
-                    onClick={() => setRoleInputFor(selectedCandidate.iid)}
-                  >
-                    ✅ Selected
-                  </button>
-                  <button
-                    type="button"
-                    className={`status-btn ${selectedCandidate.status === "rejected" ? "active" : ""}`}
-                    onClick={() => updateCandidateStatus(selectedCandidate.iid, "rejected")}
-                  >
-                    ❌ Rejected
-                  </button>
-                </>
-              )}
+              {renderActionButtons(selectedCandidate)}
             </div>
+
             <br />
-            <button type="button" className="secondary" onClick={sendEmail}>
+            <button className="secondary" onClick={sendEmail}>
               Send Result Email
             </button>
           </div>
@@ -213,7 +220,10 @@ function Recruit({ setIsAuthenticated }) {
       {/* Search Section */}
       <section>
         <h2>Search User</h2>
-        <select value={searchType} onChange={(e) => setSearchType(e.target.value)}>
+        <select
+          value={searchType}
+          onChange={(e) => setSearchType(e.target.value)}
+        >
           <option value="email">Email</option>
           <option value="phone">Phone</option>
           <option value="name">Name</option>
