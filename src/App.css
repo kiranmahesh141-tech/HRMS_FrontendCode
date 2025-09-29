@@ -13,7 +13,7 @@ body {
     background: linear-gradient(249.03deg, #4E0294 14.57%, #402659 38.01%, #472A62 50.71%, #641B3A 67.79%, #88181F 94.88%);
     background-size: 400% 400%;
     animation: gradientShift 15s ease infinite;
-    overflow: hidden;
+    overflow: auto;
 }
 
 

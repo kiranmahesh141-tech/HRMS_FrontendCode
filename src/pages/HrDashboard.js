@@ -34,15 +34,17 @@ function HRDashboard({ setIsAuthenticated }) {
       </div>      
       <div className={`sidebar ${isOpen ? "open" : "closed"}`}>
       
-
-      <ul className="menu">
+        <div className="upside">
+           <ul className="menu">
         <li>Profile</li>
         <li>
             <Link to="Recruit">Recruitment & Onboarding</Link>
           </li>
         <li>Attendance & Leave Management</li>
         <li>Exit Management & Offboarding</li>
-      </ul>
+           </ul>
+        </div>
+     
 
       {/* User Info Section */}
     <div className="user-info">

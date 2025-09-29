@@ -66,10 +66,10 @@ function Login({ setIsAuthenticated }) {
 
   return (
     <div className="wrapper">
-      <div className="logo">Logo</div>
+      <div className="logo">HRMS</div>
       <div className="login-container">
         <div style={styles.container} className="login-box">
-          <h2>Login</h2>
+          <h2>HRMS</h2>
           <form
             onSubmit={handleLogin}
             style={styles.form}

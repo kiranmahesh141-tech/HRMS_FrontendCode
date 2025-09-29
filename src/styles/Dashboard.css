@@ -1,26 +1,28 @@
-.logoutbtn{
-  position: absolute;
+/* ==========================
+   Logout Button
+========================== */
+.logoutbtn {
+  position: fixed;
   top: 20px;
   right: 20px;
   padding: 10px 20px;
-  background-color: black; /* bright red */
+  background-color: black;
   color: white;
-  border-radius: 20px;       /* smooth rounded corners */
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2); /* subtle shadow */
+  border-radius: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
   cursor: pointer;
   font-size: 16px;
   transition: all 0.2s ease-in-out;
   z-index: 1000;
 }
 
-.logoutbtn:hover{
-     background-color: white; /* lighter red on hover */
-     color: black;
+.logoutbtn:hover {
+  background-color: white;
+  color: black;
   box-shadow: 0 6px 8px rgba(0,0,0,0.25);
   transform: translateY(-2px);
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .logoutbtn {
     top: 15px;
@@ -39,32 +41,37 @@
   }
 }
 
-/* sidebar */
-
+/* ==========================
+   Sidebar
+========================== */
 .sidebar {
   position: fixed;
   top: 0;
   left: 0;
   height: 100%;
-  width: 25%;
-  color: white;
-  padding-top: 40px;
-  transition: width 0.3s ease;
-  overflow: hidden;
-  max-width: 400px;
-  padding: 40px;
- 
+  width: 250px;
+  max-width: 300px;
+  
+  background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* keeps user-info at bottom */
+  padding: 40px 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
+  transition: width 0.3s ease;
+  z-index: 999;
 }
-/* Dashboard for recruitment */
-.dashboard{
-  width: 100%;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  box-sizing: border-box;
+
+/* Upside menu section */
+.sidebar .upside {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
+
 /* Menu list */
 .menu {
   list-style: none;
@@ -75,90 +82,63 @@
 .menu li {
   padding: 12px 20px;
   cursor: pointer;
-  transition: background 0.2s,ease-in;
+  transition: background 0.2s ease-in;
+  border-radius: 10px;
 }
-.menu li a{
-   list-style: none;
-   color: white;  
+
+.menu li a {
+  text-decoration: none;
+  color: white;  
 }
+
 .menu li:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  box-sizing: border-box;
-  border-radius: 30px;
+  background-color: #2a2a3f;
 }
 
-
+/* ==========================
+   User Info Section
+========================== */
 .user-info {
-  position: fixed;
-  bottom: 0;
-  left: 0;          
-  width: 25%;/* full width */
-  background-color: #000; /* black background */
-  color: #fff;            /* white text */
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px 20px;
-  font-size: 16px;
-  z-index: 1000;          /* stay above other elements */
+  gap: 10px;
+  padding: 12px 20px;
+  background-color: #000;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
 }
 
 .user-info .avatar {
-  margin-right: 10px;
-  font-size: 20px; /* make emoji a bit bigger */
- 
+  font-size: 20px;
 }
 
 .user-info .username {
   font-weight: bold;
 }
 
-.candidates-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.candidates-table th, .candidates-table td {
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  text-align: left;
-}
-
-.status-btn {
-  margin-right: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #ccc;
-  background: #f5f5f5;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.status-btn.active {
-  background: #4caf50;
-  color: white;
-  font-weight: bold;
-}
-
-.status-btn:nth-child(2).active {
-  background: #f44336;
-}
-
-
-/* Dashboard base */
+/* ==========================
+   Dashboard / Main content
+========================== */
 .dashboard {
+  margin-left: 250px; /* space for fixed sidebar */
   padding: 20px;
   font-family: Arial, sans-serif;
-  background-color: #1e1e2f; /* dark background */
+  
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   color: white;
+  min-height: 100vh;
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease;
 }
 
-/* Candidate List */
+/* ==========================
+   Candidate List / Items
+========================== */
 .candidate-list {
-  list-style: none; /* remove bullets */
+  list-style: none;
   padding: 0;
   margin: 0;
 }
@@ -173,31 +153,35 @@
   border-radius: 8px;
   transition: background 0.2s;
   cursor: pointer;
-  width: 100%;
 }
 
 .candidate-item:hover {
   background-color: #3a3a5a;
 }
 
-/* Candidate details inside row */
-.candidate-item > div:first-child {
-  flex: 1; /* take up remaining space */
-}
-
 .candidate-item h3 {
   margin: 0 0 4px 0;
   font-size: 16px;
-  color: white;
 }
 
 .candidate-item p {
   margin: 2px 0;
   font-size: 14px;
-  color: white;
 }
 
-/* Status buttons */
+/* ==========================
+   Candidate Detail Panel
+========================== */
+.candidate-detail {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #2a2a3f;
+  border-radius: 8px;
+}
+
+/* ==========================
+   Status Buttons
+========================== */
 .status-buttons {
   display: flex;
   gap: 8px;
@@ -207,45 +191,75 @@
   padding: 6px 10px;
   border: none;
   border-radius: 4px;
-  background-color: #555; /* default grey */
+  background-color: #555;
   color: white;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.status-btn.active,
-.status-btn:hover {
-  background-color: #4caf50; /* green when selected */
+.status-btn.active {
+  background-color: #4caf50;
 }
 
 .status-btn.active.reject {
-  background-color: #f44336; /* red for rejected */
+  background-color: #f44336;
 }
 
-/* Candidate Detail Panel */
-.candidate-detail {
-  margin-top: 20px;
-  padding: 16px;
-  background-color: #2a2a3f;
-  border-radius: 8px;
+/* Role input */
+.role-input {
+  display: flex;
+  gap: 8px;
 }
 
-.candidate-detail h2 {
-  margin-top: 0;
-}
-
-textarea {
-  width: 100%;
-  min-height: 60px;
+.role-input input {
+  flex: 1;
+  padding: 6px;
   border-radius: 4px;
   border: 1px solid #555;
   background-color: #1e1e2f;
   color: white;
-  padding: 6px;
 }
 
-/* Search section */
+/* ==========================
+   Search Section
+========================== */
+input[type="text"], select {
+  padding: 6px 10px;
+  margin-right: 8px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1e1e2f;
+  color: white;
+}
+
+input[type="password"], select {
+  padding: 6px 10px;
+  margin-right: 8px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1e1e2f;
+  color: white;
+}
+
+input[type="email"], select {
+  padding: 6px 10px;
+  margin-right: 8px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1e1e2f;
+  color: white;
+}
+
+input[type="date"], select {
+  padding: 6px 10px;
+  margin-right: 8px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background-color: #1e1e2f;
+  color: white;
+}
+
 .result {
   margin-top: 10px;
   background-color: #2a2a3f;
@@ -253,17 +267,63 @@ textarea {
   border-radius: 4px;
 }
 
-/* Buttons */
+/* ==========================
+   Buttons
+========================== */
 button.secondary {
   background-color: #007bff;
   color: white;
   margin-left: 8px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
 }
 
+button.secondary:hover {
+  background-color: #0056b3;
+}
+
+/* ==========================
+   Message Box
+========================== */
 #message {
   margin-top: 12px;
   padding: 8px;
   background-color: #444;
   border-radius: 4px;
   color: white;
+}
+
+/* ==========================
+   Responsive
+========================== */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+    padding: 20px;
+  }
+
+  .dashboard {
+    margin-left: 200px;
+  }
+
+  .menu li {
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 150px;
+    padding: 15px;
+  }
+
+  .dashboard {
+    margin-left: 150px;
+  }
+
+  .menu li {
+    padding: 8px 12px;
+  }
 }
