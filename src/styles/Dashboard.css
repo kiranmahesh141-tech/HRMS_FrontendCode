@@ -254,9 +254,9 @@ button.secondary:hover {
 #message {
   margin-top: 12px;
   padding: 10px;
-  background: #444;
+  background: black;
   border-radius: 6px;
-  color: white;
+  color: red;
 }
 
 .role-input button{

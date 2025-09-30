@@ -288,7 +288,7 @@ function Recruit({ setIsAuthenticated }) {
           )
         )}
       </section>
-
+      {message && <div id="message">{message}</div>}
       {/* ========================= */}
       {/* CANDIDATE LIST (if no search) */}
       {/* ========================= */}
@@ -328,7 +328,7 @@ function Recruit({ setIsAuthenticated }) {
         </section>
       )}
 
-      {message && <div id="message">{message}</div>}
+      
     </div>
   );
 }
