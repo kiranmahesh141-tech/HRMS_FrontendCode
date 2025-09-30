@@ -88,7 +88,7 @@ function Register() {
           <input className="form-input" type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
           <input className="form-input" type="text" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
           <input className="form-input" type="date" name="dob" max={maxDate} value={formData.dob} onChange={handleChange} required />
-
+          
           <button type="submit" className="register-btn" style={{ padding: "12px", background: "#007bff", color: "#fff", border: "none", borderRadius: "6px" }}>
             Register
           </button>
