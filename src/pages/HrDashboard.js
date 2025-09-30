@@ -64,7 +64,7 @@ function HRDashboard({ setIsAuthenticated }) {
                 to="exit"
                 className={({ isActive }) => (isActive ? "active" : "")}
               >
-                Exit Management & Offboarding
+                Existing Employee Registration
               </NavLink>
             </li>
           </ul>

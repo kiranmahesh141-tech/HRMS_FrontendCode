@@ -21,7 +21,7 @@ function Login({ setIsAuthenticated }) {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8080/login", {
+      const res = await axios.post("http://localhost:8080/user/login", {
         identifier,
         password,
       });
@@ -41,9 +41,17 @@ function Login({ setIsAuthenticated }) {
       if (setIsAuthenticated) setIsAuthenticated(true);
 
       // Redirect based on role
-      if (role === "HR") navigate("/hr-dashboard");
-      else if (role === "EMP") navigate("/emp-dashboard");
-      else navigate("/");
+      // Convert role to lowercase for comparison
+      const normalizedRole = role.toLowerCase();
+
+      if (normalizedRole === "hr") {
+          navigate("/hr-dashboard");
+      } else if (normalizedRole === "emp") {
+          navigate("/emp-dashboard");
+      } else {
+          navigate("/");
+      }
+
 
       showToast("Login successful!", "success");
     } catch (error) {

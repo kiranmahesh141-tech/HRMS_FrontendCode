@@ -145,7 +145,6 @@
   margin-bottom: 12px;
   border-radius: 10px;
   transition: background 0.2s;
-  cursor: pointer;
 }
 
 .candidate-item:hover {
@@ -189,12 +188,22 @@
   transition: background 0.2s;
 }
 
+.select:hover {
+   background: #4caf50;
+}
+
+.reject:hover{
+   background: #f44336;
+}
+
 .status-btn.active {
   background: #4caf50;
+  cursor: default;
 }
 
 .status-btn.reject.active {
   background: #f44336;
+  cursor: default;
 }
 
 /* ==========================
@@ -206,7 +215,7 @@ select {
   margin: 5px 0;
   border-radius: 6px;
   border: 1px solid #555;
-  background: rgba(255, 255, 255, 0.05);
+  background: black;
   width: 100%;
   color: white;
 }
@@ -245,6 +254,17 @@ button.secondary:hover {
   border-radius: 6px;
   color: white;
 }
+
+.role-input button{
+ 
+  flex-direction: row;
+  border-radius: 20px;
+  padding: 8px;
+}
+confirm:hover{
+  background: #3498db;
+}
+
 
 /* ==========================
    Spinner

@@ -19,7 +19,7 @@ function Recruit({ setIsAuthenticated }) {
 
   const [updatingCandidateId, setUpdatingCandidateId] = useState(null);
 
-  const API_BASE = "http://localhost:8080";
+  const API_BASE = "http://localhost:8080/hr";
 
   // Universal fetch function
   async function fetchJSON(url, options = {}) {
@@ -129,6 +129,8 @@ function Recruit({ setIsAuthenticated }) {
       url = `${API_BASE}/searchPhone?phone=${encodeURIComponent(value)}`;
     } else if (type === "name") {
       url = `${API_BASE}/searchName?fullName=${encodeURIComponent(value)}`;
+    } else if (type === "status") {
+      url = `${API_BASE}/searchStatus?status=${encodeURIComponent(value)}`;
     }
 
     try {
@@ -149,7 +151,11 @@ function Recruit({ setIsAuthenticated }) {
   const debouncedSearch = useCallback(debounce(searchUser, 200), [searchUser]);
 
   useEffect(() => {
-    debouncedSearch(searchValue, searchType);
+    if (searchType && searchValue) {
+      debouncedSearch(searchValue, searchType);
+    } else {
+      setSearchResult(null);
+    }
     return debouncedSearch.cancel;
   }, [searchValue, searchType, debouncedSearch]);
 
@@ -172,8 +178,10 @@ function Recruit({ setIsAuthenticated }) {
               placeholder="Enter role"
               value={roleValue}
               onChange={(e) => setRoleValue(e.target.value)}
+              required
             />
             <button
+              className="confirm"
               onClick={() =>
                 updateCandidateStatus(candidate.iid, "selected", roleValue)
               }
@@ -189,13 +197,13 @@ function Recruit({ setIsAuthenticated }) {
       return (
         <>
           <button
-            className="status-btn"
+            className="status-btn select"
             onClick={() => setRoleInputFor(candidate.iid)}
           >
             Select
           </button>
           <button
-            className="status-btn"
+            className="status-btn reject"
             onClick={() => updateCandidateStatus(candidate.iid, "rejected")}
           >
             Reject
@@ -235,24 +243,39 @@ function Recruit({ setIsAuthenticated }) {
         <h2>Search User</h2>
         <select
           value={searchType}
-          onChange={(e) => setSearchType(e.target.value)}
+          onChange={(e) => {
+            setSearchType(e.target.value);
+            setSearchValue(""); // Reset input when type changes
+            setSearchResult(null);
+            setMessage("");
+          }}
         >
-          <div className="selection">
-
-          <option value="" disabled hidden>
-            Select an option
-          </option>
+          <option value="" disabled hidden>Select an option</option>
           <option value="name">Name</option>
           <option value="email">Email</option>
           <option value="phone">Phone</option>
-          </div>
+          <option value="status">Status</option>
         </select>
-        <input
-          type="text"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="Type to search..."
-        />
+
+        {searchType === "status" ? (
+          <select
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+          >
+            <option value="" disabled hidden>Select status</option>
+            <option value="ONHOLD">ONHOLD</option>
+            <option value="selected">Selected</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        ) : (
+          <input
+            type="text"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="Type to search..."
+          />
+        )}
+
         {searchResult && (
           Array.isArray(searchResult) ? (
             <ul className="candidate-list">
