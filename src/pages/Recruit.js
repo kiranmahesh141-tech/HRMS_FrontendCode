@@ -10,7 +10,7 @@ function Recruit({ setIsAuthenticated }) {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [message, setMessage] = useState("");
 
-  const [searchType, setSearchType] = useState("email");
+  const [searchType, setSearchType] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [searchResult, setSearchResult] = useState(null);
 
@@ -216,6 +216,7 @@ function Recruit({ setIsAuthenticated }) {
         style={{ cursor: "pointer" }}
       >
         <h3>{c.name}</h3>
+        <p><strong>Name:</strong> {c.fullName || "-"}</p>
         <p><strong>Email:</strong> {c.email || "-"}</p>
         <p><strong>Phone:</strong> {c.phone || "-"}</p>
         <p><strong>Interview Id:</strong> {c.iid || "-"}</p>
@@ -236,9 +237,15 @@ function Recruit({ setIsAuthenticated }) {
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
         >
+          <div className="selection">
+
+          <option value="" disabled hidden>
+            Select an option
+          </option>
+          <option value="name">Name</option>
           <option value="email">Email</option>
           <option value="phone">Phone</option>
-          <option value="name">Name</option>
+          </div>
         </select>
         <input
           type="text"
@@ -281,6 +288,7 @@ function Recruit({ setIsAuthenticated }) {
         <section>
           <div className="candidate-detail">
             <h2>{selectedCandidate.name}</h2>
+            <p><strong>Name:</strong> {selectedCandidate.fullName || "-"}</p>
             <p><strong>Email:</strong> {selectedCandidate.email || "-"}</p>
             <p><strong>Phone:</strong> {selectedCandidate.phone || "-"}</p>
             <p><strong>Interview Id:</strong> {selectedCandidate.iid || "-"}</p>

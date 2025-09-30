@@ -1,44 +1,37 @@
 /* ==========================
+   General Reset
+========================== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+
+/* ==========================
    Logout Button
 ========================== */
 .logoutbtn {
   position: fixed;
-  top: 20px;
+  top: max(20px, env(safe-area-inset-top));
   right: 20px;
   padding: 10px 20px;
-  background-color: black;
+  background: black;
   color: white;
   border-radius: 20px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  cursor: pointer;
   font-size: 16px;
+  cursor: pointer;
   transition: all 0.2s ease-in-out;
   z-index: 1000;
+  border: none;
 }
 
 .logoutbtn:hover {
-  background-color: white;
+  background: white;
   color: black;
-  box-shadow: 0 6px 8px rgba(0,0,0,0.25);
   transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-  .logoutbtn {
-    top: 15px;
-    right: 15px;
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .logoutbtn {
-    top: 10px;
-    right: 10px;
-    padding: 6px 12px;
-    font-size: 12px;
-  }
+  box-shadow: 0 6px 10px rgba(0,0,0,0.25);
 }
 
 /* ==========================
@@ -49,65 +42,62 @@
   top: 0;
   left: 0;
   height: 100%;
-  width: 250px;
-  max-width: 300px;
-  
+  width: 260px;
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* keeps user-info at bottom */
+  justify-content: space-between;
   padding: 40px 20px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  box-sizing: border-box;
   transition: width 0.3s ease;
   z-index: 999;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
 
-/* Upside menu section */
 .sidebar .upside {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Menu list */
+/* Sidebar Menu */
 .menu {
   list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu li {
-  padding: 12px 20px;
-  cursor: pointer;
-  transition: background 0.2s ease-in;
-  border-radius: 10px;
 }
 
 .menu li a {
+  display: block;
+  padding: 12px 18px;
   text-decoration: none;
-  color: white;  
+  color: #cbd5e1;
+  border-radius: 8px;
+  transition: background 0.2s, color 0.2s;
 }
 
-.menu li:hover {
-  background-color: #2a2a3f;
+.menu li a:hover {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  color: white;
 }
 
-/* ==========================
-   User Info Section
-========================== */
+.menu li a.active {
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  color: white;
+  font-weight: bold;
+}
+
+/* User Info */
 .user-info {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 12px 20px;
-  background-color: #000;
+  padding: 12px;
+  color: white;
+  background: #000;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  font-size: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
 .user-info .avatar {
@@ -119,64 +109,65 @@
 }
 
 /* ==========================
-   Dashboard / Main content
+   Dashboard Content
 ========================== */
 .dashboard {
-  margin-left: 250px; /* space for fixed sidebar */
-  padding: 20px;
-  font-family: Arial, sans-serif;
-  
+  margin-left: 200px;
+  margin-top: 50px;
+  padding: 30px;
+  min-height: 100vh;
+  padding-top: max(30px, env(safe-area-inset-top));
   background: rgba(255, 255, 255, 0.05);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  color: white;
-  min-height: 100vh;
-  box-sizing: border-box;
+  overflow-y: auto;
   transition: margin-left 0.3s ease;
+  width: 80%;
 }
 
+
+
 /* ==========================
-   Candidate List / Items
+   Candidate List
 ========================== */
 .candidate-list {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
   list-style: none;
-  padding: 0;
-  margin: 0;
 }
 
 .candidate-item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  margin-bottom: 10px;
-  background-color: #2a2a3f;
-  border-radius: 8px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  border-radius: 10px;
   transition: background 0.2s;
   cursor: pointer;
 }
 
 .candidate-item:hover {
-  background-color: #3a3a5a;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .candidate-item h3 {
-  margin: 0 0 4px 0;
   font-size: 16px;
+  margin-bottom: 4px;
 }
 
 .candidate-item p {
-  margin: 2px 0;
   font-size: 14px;
+  color: #cbd5e1;
 }
 
-/* ==========================
-   Candidate Detail Panel
-========================== */
+/* Candidate Detail Panel */
 .candidate-detail {
   margin-top: 20px;
-  padding: 16px;
-  background-color: #2a2a3f;
-  border-radius: 8px;
+  padding: 18px;
+  background: #2a2a3f;
+  border-radius: 10px;
 }
 
 /* ==========================
@@ -188,10 +179,10 @@
 }
 
 .status-btn {
-  padding: 6px 10px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 4px;
-  background-color: #555;
+  border-radius: 6px;
+  background: #555;
   color: white;
   font-weight: bold;
   cursor: pointer;
@@ -199,89 +190,49 @@
 }
 
 .status-btn.active {
-  background-color: #4caf50;
+  background: #4caf50;
 }
 
-.status-btn.active.reject {
-  background-color: #f44336;
-}
-
-/* Role input */
-.role-input {
-  display: flex;
-  gap: 8px;
-}
-
-.role-input input {
-  flex: 1;
-  padding: 6px;
-  border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #1e1e2f;
-  color: white;
+.status-btn.reject.active {
+  background: #f44336;
 }
 
 /* ==========================
-   Search Section
+   Inputs
 ========================== */
-input[type="text"], select {
-  padding: 6px 10px;
-  margin-right: 8px;
-  border-radius: 4px;
+input,
+select {
+  padding: 8px 10px;
+  margin: 5px 0;
+  border-radius: 6px;
   border: 1px solid #555;
-  background-color: #1e1e2f;
+  background: rgba(255, 255, 255, 0.05);
+  width: 100%;
   color: white;
 }
 
-input[type="password"], select {
-  padding: 6px 10px;
-  margin-right: 8px;
-  border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #1e1e2f;
-  color: white;
-}
-
-input[type="email"], select {
-  padding: 6px 10px;
-  margin-right: 8px;
-  border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #1e1e2f;
-  color: white;
-}
-
-input[type="date"], select {
-  padding: 6px 10px;
-  margin-right: 8px;
-  border-radius: 4px;
-  border: 1px solid #555;
-  background-color: #1e1e2f;
-  color: white;
-}
-
-.result {
-  margin-top: 10px;
-  background-color: #2a2a3f;
-  padding: 8px;
-  border-radius: 4px;
+.selection{
+  background: rgba(255, 255, 255, 0.05);
+  color: black;
 }
 
 /* ==========================
    Buttons
 ========================== */
 button.secondary {
-  background-color: #007bff;
-  color: white;
-  margin-left: 8px;
-  padding: 6px 12px;
-  border-radius: 4px;
+  
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  padding: 8px 14px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 button.secondary:hover {
-  background-color: #0056b3;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* ==========================
@@ -289,50 +240,18 @@ button.secondary:hover {
 ========================== */
 #message {
   margin-top: 12px;
-  padding: 8px;
-  background-color: #444;
-  border-radius: 4px;
+  padding: 10px;
+  background: #444;
+  border-radius: 6px;
   color: white;
 }
 
 /* ==========================
-   Responsive
+   Spinner
 ========================== */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 200px;
-    padding: 20px;
-  }
-
-  .dashboard {
-    margin-left: 200px;
-  }
-
-  .menu li {
-    padding: 10px 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    width: 150px;
-    padding: 15px;
-  }
-
-  .dashboard {
-    margin-left: 150px;
-  }
-
-  .menu li {
-    padding: 8px 12px;
-  }
-}
-
-
-/* Spinner */
 .spinner {
-  border: 3px solid #f3f3f3;      /* Light grey */
-  border-top: 3px solid #3498db;  /* Blue */
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #3498db;
   border-radius: 50%;
   width: 18px;
   height: 18px;
@@ -342,6 +261,42 @@ button.secondary:hover {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================
+   Responsive
+========================== */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 220px;
+  }
+  .dashboard {
+    margin-left: 220px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 200px;
+    padding: 20px;
+  }
+  .dashboard {
+    margin-left: 200px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 160px;
+    padding: 15px;
+  }
+  .dashboard {
+    margin-left: 160px;
+    padding: 12px;
+  }
 }
